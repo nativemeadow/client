@@ -1,0 +1,68 @@
+.reg-login__container {
+	max-width: var(--max-container-size);
+	min-width: var(--min-container-size);
+	width: 75%;
+	margin: 0 auto;
+	padding: 80px 0 100px 0;
+}
+
+.reg-login__container h2 {
+	margin-bottom: 3rem;
+}
+
+.reg-login-information,
+.reg-login-name-address {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 0.5rem;
+}
+
+.reg-login__name-address-heading,
+.reg-login__heading,
+.reg-login__company-heading {
+	font-family: 'Raleway', sans-serif;
+	font-weight: 600;
+}
+
+.reg-login__heading {
+	margin-bottom: 1rem;
+}
+
+.reg-login__name-address-heading {
+	margin-top: 3rem;
+}
+
+.reg-login-fields {
+	display: grid;
+	grid-template-columns: 25rem;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.reg-login__label {
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.reg-login__button {
+	background-color: #fff;
+}
+
+.reg-login__button:hover,
+.reg-login__button:active {
+	background-color: #aa081e;
+	color: #fff;
+}
+
+@media screen and (min-width: 768px) {
+	.reg-login-fields {
+		display: grid;
+		grid-template-columns: 12rem 25rem;
+		align-items: center;
+		gap: 0.5rem;
+	}
+}
+
+.error__listItems {
+	list-style: none;
+}
