@@ -1,26 +1,29 @@
 import React from 'react';
-import logo from './logo.svg';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
+import { QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
+import client from './react-query-client';
+
+import CategoryDetail from './components/product-categories/category-detail';
+
+import CategoryList from './components/product-categories/category-list';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	return (
+		<QueryClientProvider client={client}>
+			<Router>
+				<Routes>
+					<Route path='/' element={<CategoryList />} />
+					<Route
+						path='/category/:categoryId'
+						element={<CategoryDetail />}
+					/>
+				</Routes>
+			</Router>
+			<ReactQueryDevtools />
+		</QueryClientProvider>
+	);
 }
 
 export default App;

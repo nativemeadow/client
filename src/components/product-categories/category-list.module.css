@@ -1,0 +1,161 @@
+.product-gallery__heading {
+	font-size: 35px;
+	font-weight: 400;
+	padding-bottom: 45px;
+}
+
+.product-gallery__container {
+	max-width: 1140px;
+	width: 98%;
+	margin: 0 auto;
+	outline: none;
+}
+
+/* smallest screen size */
+.product-gallery__grid {
+	display: grid;
+	grid-auto-rows: minmax(15rem, auto);
+	grid-template-columns: 1fr;
+	gap: 0.8rem;
+	grid-template-areas:
+		'sand'
+		'mulch'
+		'fertilizer'
+		'stone'
+		'pottery'
+		'water'
+		'tools'
+		'precast';
+}
+
+/* largest screen size */
+@media screen and (min-width: 991px) {
+	.product-gallery__grid {
+		grid-template-columns: repeat(3, 1fr);
+		grid-template-areas:
+			'sand stone water'
+			'mulch stone tools'
+			'fertilizer pottery tools'
+			'fertilizer pottery precast';
+	}
+}
+
+@media screen and (min-width: 851px) and (max-width: 990px) {
+	.product-gallery__grid {
+		grid-template-columns: repeat(3, 1fr);
+		grid-template-areas:
+			'sand stone tools'
+			'mulch pottery precast'
+			'fertilizer water .';
+	}
+}
+
+/* intermediate screen size before smallest */
+@media screen and (min-width: 481px) and (max-width: 850px) {
+	.product-gallery__grid {
+		grid-template-columns: repeat(2, 1fr);
+		grid-template-areas:
+			'sand pottery'
+			'mulch water'
+			'fertilizer tools'
+			'stone precast';
+	}
+}
+
+.product-gallery__item {
+	margin-bottom: 0px;
+	overflow: hidden;
+	width: 100%;
+	height: 100%;
+	position: relative;
+	border: 2px solid red;
+}
+
+.product-gallery__card {
+	position: absolute;
+	top: 90px;
+	width: 260px;
+	height: 65px;
+	text-align: center;
+	transform: translateX(-50%);
+	-ms-transform: translateX(-50%);
+	-webkit-transform: translateX(-50%);
+	-moz-transform: translateX(-50%);
+	-o-transform: translateX(-50%);
+	color: #231f20;
+	background: #fff;
+	border-radius: 5px;
+	font-size: 16px;
+	font-weight: 600 !important;
+	padding: 10px 20px;
+	margin: 0;
+	left: 50%;
+}
+
+.product-gallery {
+	max-width: var(--max-container-size);
+	min-width: var(--min-container-size);
+	width: 98%;
+	margin: 0 auto;
+	padding: 80px 0 100px 0;
+}
+
+.product-gallery__title {
+	text-align: center;
+}
+
+.product-gallery__item > img {
+	object-fit: cover;
+	width: 100%;
+	max-height: 100%;
+}
+
+.product-gallery__link {
+	display: contents;
+	position: relative;
+	width: 100%;
+	max-height: 100%;
+	border: 2px solid black;
+}
+
+.product-gallery__sand {
+	grid-area: sand;
+	border: 2px solid black;
+}
+
+.product-gallery__mulch {
+	grid-area: mulch;
+	border: 2px solid black;
+}
+
+.product-gallery__biologicals {
+	grid-area: fertilizer;
+	border: 2px solid black;
+}
+
+.product-gallery__stone {
+	grid-area: stone;
+	border: 2px solid black;
+	width: 100%;
+	max-height: 100%;
+}
+
+.product-gallery__pottery {
+	grid-area: pottery;
+	border: 2px solid black;
+}
+
+.product-gallery__water-features {
+	grid-area: water;
+	border: 2px solid black;
+}
+
+.product-gallery__tools {
+	grid-area: tools;
+	border: 2px solid black;
+}
+
+.product-gallery__precast {
+	grid-area: precast;
+	border: 2px solid black;
+}
