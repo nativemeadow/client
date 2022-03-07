@@ -11,18 +11,20 @@ import CategoryList from './components/product-categories/category-list';
 
 function App() {
 	return (
-		<QueryClientProvider client={client}>
-			<Router>
-				<Routes>
-					<Route path='/' element={<CategoryList />} />
-					<Route
-						path='/category/:categoryId'
-						element={<CategoryDetail />}
-					/>
-				</Routes>
-			</Router>
-			<ReactQueryDevtools />
-		</QueryClientProvider>
+		<div className='container'>
+			<QueryClientProvider client={client}>
+				<Router>
+					<Routes>
+						<Route path='/*' element={<CategoryList />} />
+						<Route
+							path='/category/:categoryId/*'
+							element={<CategoryDetail />}
+						/>
+					</Routes>
+				</Router>
+				<ReactQueryDevtools />
+			</QueryClientProvider>
+		</div>
 	);
 }
 

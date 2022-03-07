@@ -61,3 +61,10 @@ a {
 	background-color: transparent;
 	color: #d71a20;
 }
+
+.container {
+	max-width: 1140px;
+	width: 98%;
+	margin: 0 auto;
+	outline: none;
+}

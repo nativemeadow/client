@@ -32,9 +32,9 @@ export const useHttpClient = () => {
 				(reqCtrl) => reqCtrl !== httpAbortCtrl
 			);
 
-			if (!data.ok) {
-				throw new Error(data.message);
-			}
+			// if (!data.ok) {
+			// 	throw new Error(data.message);
+			// }
 
 			setIsLoading(false);
 
