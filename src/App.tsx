@@ -9,6 +9,8 @@ import CategoryDetail from './components/product-categories/category-detail';
 
 import CategoryList from './components/product-categories/category-list';
 
+import ProductDetail from './components/product-categories/product-detail';
+
 function App() {
 	return (
 		<div className='container'>
@@ -16,6 +18,10 @@ function App() {
 				<Router>
 					<Routes>
 						<Route path='/*' element={<CategoryList />} />
+						<Route
+							path='/category/:categoryId/product/:productId'
+							element={<ProductDetail />}
+						/>
 						<Route
 							path='/category/:categoryId/*'
 							element={<CategoryDetail />}

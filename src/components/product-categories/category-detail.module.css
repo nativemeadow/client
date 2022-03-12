@@ -33,7 +33,7 @@
 
 .category__group {
 	display: grid;
-	gap: 1rem;
+	gap: 1.8rem;
 	grid-template-columns: repeat(2, 1fr);
 	max-width: 85%;
 	margin: 0 auto;
@@ -44,7 +44,7 @@
 	width: 100%;
 }
 
-.category-title {
+.category-title a {
 	font-size: 1rem;
 	color: #333;
 	font-weight: 600;

@@ -8,7 +8,7 @@ import { BreadCrumbItem } from './breadcrumb-item';
 
 import classes from './bread-crumbs.module.css';
 
-type CategoryProps = { categoryId: string | undefined };
+type CategoryProps = { categoryId: string | undefined; productId?: string };
 
 const BreadCrumbs: React.FC<CategoryProps> = ({ categoryId }) => {
 	const { error, sendRequest } = useHttpClient();

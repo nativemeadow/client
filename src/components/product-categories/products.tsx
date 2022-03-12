@@ -69,9 +69,10 @@ const Products = (props: { categoryId: number | undefined }) => {
 				<div className={classes['products__group']}>
 					{products?.map((item) => {
 						return (
-							<div>
+							<div key={item.id}>
 								<div className={classes['products__image']}>
-									<Link to={`/category/${item.id}`}>
+									<Link
+										to={`/category/${categoryId}/product/${item.id}`}>
 										<img
 											src={`${configData.IMAGES}/products/${item.image}`}
 											alt={item.title}
@@ -79,7 +80,8 @@ const Products = (props: { categoryId: number | undefined }) => {
 									</Link>
 								</div>
 								<h2 className={classes['products-title']}>
-									<Link to={`/category/${item.id}`}>
+									<Link
+										to={`/category/${categoryId}/product/${item.id}`}>
 										{parser(item.title.toUpperCase())}
 									</Link>
 								</h2>
