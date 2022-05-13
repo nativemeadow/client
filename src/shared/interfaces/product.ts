@@ -1,4 +1,5 @@
 export interface Pricing {
+	key: number;
 	title: string;
 	description: string;
 	price: number;
@@ -9,6 +10,7 @@ export interface Pricing {
 }
 
 export interface Product {
+	categoryId?: number;
 	id: number;
 	sku: string;
 	title: string;

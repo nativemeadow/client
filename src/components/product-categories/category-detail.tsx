@@ -1,82 +1,64 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
-// import { useQuery } from 'react-query';
+import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
-import parse, { Element } from 'html-react-parser';
-import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
+import parse from 'html-react-parser';
 
-// import httpFetch from '../../shared/http/http-fetch';
-import { useHttpClient } from '../../shared/hooks/http-hooks';
+import httpFetch from '../../shared/http/http-fetch';
 import configData from '../../config.json';
 import { Category } from '../../shared/interfaces/category-list';
 import BreadCrumbs from '../navigation/bread-crumbs';
 import Products from './products';
+import client from '../../react-query-client';
 
 import classes from './category-detail.module.css';
 
 const CategoryDetail = () => {
 	const categoryId = useParams().categoryId;
 	console.log('Category Id:', categoryId);
-	const { isLoading, error, sendRequest, clearError } = useHttpClient();
 	const [parentCategory, setParentCategory] = useState<Category>();
 	const [categoryGroup, setCategoryGroup] = useState<Category[]>([]);
 
-	// const { isLoading, isError, data, error } = useQuery<
-	// 	{ data: Category[] },
-	// 	Error
-	// >('categories', async () => {
-	// 	const data = await httpFetch<{ data: Category[] }>(
-	// 		`${configData.BACKEND_URL}/categories/${categoryId}`
-	// 	);
-	// 	setParentCategory(data?.data.shift());
-	// 	setCategoryGroup(data?.data);
-	// 	return data;
-	// });
+	const {
+		isLoading,
+		isError,
+		data: categoryGroupData,
+		error,
+	} = useQuery<Category[], Error>(['subCatagories', categoryId], async () => {
+		try {
+			return await httpFetch<Category[]>(
+				`${configData.BACKEND_URL}/categories/${categoryId}`
+			);
+		} catch (error: any) {
+			throw new Error(error);
+		}
+	});
 
 	useEffect(() => {
-		const fetchCategory = async () => {
-			try {
-				const data = await sendRequest<{ data: Category[] }>(
-					`${configData.BACKEND_URL}/categories/${categoryId}`
-				);
-				setParentCategory(data?.data.shift());
-				setCategoryGroup(data?.data);
-			} catch (err) {
-				console.error(err);
-			}
-		};
-
-		fetchCategory();
-	}, [categoryId, sendRequest]);
-
-	const parser = (input: string) =>
-		parse(input, {
-			replace: (domNode) => {
-				if (domNode instanceof Element) {
-					return <></>;
-				}
-			},
-		});
+		setParentCategory(categoryGroupData?.shift());
+		setCategoryGroup(categoryGroupData!);
+	}, [categoryGroupData]);
 
 	return (
 		<>
-			<BreadCrumbs categoryId={categoryId} />
+			{categoryGroup && <BreadCrumbs categoryId={categoryId} />}
 			<div className={classes['category-detail']}>
 				{isLoading && (
 					<div className='center'>
 						<LoadingSpinner asOverlay />
 					</div>
 				)}
-				<ErrorModal error={error} onClear={clearError} />
+				{/* <ErrorModal error={error} onClear={clearError} /> */}
+				{isError && <div className='error'>{error?.message}</div>}
 				<h1
 					className={`${classes['category-detail__heading']} ${classes['category-detail__title']}`}>
 					{parentCategory?.title}
 				</h1>
 				<div className={classes['category-detail__description']}>
 					{parentCategory?.description?.length &&
-						parser(parentCategory?.description)}
+						parse(parentCategory?.description)}
 				</div>
 				<div className={classes['category__list']}></div>
 

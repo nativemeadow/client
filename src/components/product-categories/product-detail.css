@@ -1,0 +1,36 @@
+.calculator__modal {
+	background-color: rgb(241, 214, 214);
+}
+
+.calculator-item__modal-content {
+	padding: 0;
+}
+
+.calculator-item__modal-actions {
+	text-align: right;
+}
+
+.item__modal-header {
+	background-color: #fff;
+	color: #aa081e;
+}
+
+.addToCart__modal-content {
+	padding: 0;
+}
+
+.addToCart-item__modal-actions {
+	text-align: right;
+}
+
+.addToCart-item__modal-actions {
+	text-align: right;
+}
+
+@media (min-width: 1150px) {
+	.calculator__modal {
+		left: calc(35% - 10rem);
+		max-width: 50rem;
+		width: 70%;
+	}
+}

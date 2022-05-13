@@ -11,10 +11,11 @@ async function httpFetch<T>(
 			headers,
 		});
 		const data = await response.json();
+
 		return data as T;
 	} catch (err: any) {
 		console.error('Error occurred fetching data', err);
-		return err;
+		throw new Error(err.message);
 	}
 }
 

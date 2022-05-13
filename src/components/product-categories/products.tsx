@@ -1,61 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import parse, { Element } from 'html-react-parser';
 import { Link } from 'react-router-dom';
-import ErrorModal from '../../shared/components/UIElements/ErrorModal';
+import { useQuery } from 'react-query';
+import Image from '../../shared/components/UIElements/Images';
+// import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
-import { useHttpClient } from '../../shared/hooks/http-hooks';
-import { Product, Pricing } from '../../shared/interfaces/product';
+import httpFetch from '../../shared/http/http-fetch';
+import { parser } from '../../shared/util/html-parse';
+import { Product } from '../../shared/interfaces/product';
 import configData from '../../config.json';
+import { ProductArrayBuilder } from '../../shared/util/product-builder';
 
 import classes from './products.module.css';
-
-function ProductConstructor(prodData: Product[]) {
-	const currentProducts: Product[] = [];
-	prodData.forEach((prod: Product) => {
-		const currentProduct: Product = {
-			id: prod.id,
-			sku: prod.sku,
-			title: prod.title,
-			description: prod.description,
-			image: prod.image,
-			pricing: prod.pricing,
-		};
-		currentProducts.push(currentProduct);
-	});
-	return currentProducts;
-}
 
 const Products = (props: { categoryId: number | undefined }) => {
 	const categoryId = props.categoryId;
 	const [products, setProducts] = useState<Product[]>();
-	console.log('Category Id:', categoryId);
-	const { isLoading, error, sendRequest, clearError } = useHttpClient();
+	categoryId && console.log('Category Id:', categoryId);
+
+	const {
+		isLoading,
+		isError,
+		data: productData,
+		error,
+	} = useQuery<Product[], Error>(['products', categoryId], async () => {
+		try {
+			return await httpFetch<Product[]>(
+				`${configData.BACKEND_URL}/categories/product-pricing/${categoryId}`
+			);
+		} catch (error: any) {
+			throw new Error(error);
+		}
+	});
 
 	useEffect(() => {
-		const fetchCategory = async () => {
-			try {
-				const data = await sendRequest<Product[]>(
-					`${configData.BACKEND_URL}/categories/product-pricing/${categoryId}`
-				);
-				const currentProducts = ProductConstructor(data);
-				console.log('product', currentProducts);
-				setProducts(currentProducts);
-			} catch (err) {
-				console.error(err);
-			}
-		};
-
-		fetchCategory();
-	}, [categoryId, sendRequest]);
-
-	const parser = (input: string) =>
-		parse(input, {
-			replace: (domNode) => {
-				if (domNode instanceof Element) {
-					return <></>;
-				}
-			},
-		});
+		productData && setProducts(ProductArrayBuilder(productData));
+	}, [productData]);
 
 	return (
 		<>
@@ -65,7 +44,8 @@ const Products = (props: { categoryId: number | undefined }) => {
 						<LoadingSpinner asOverlay />
 					</div>
 				)}
-				<ErrorModal error={error} onClear={clearError} />
+				{/* <ErrorModal error={error} onClear={clearError} /> */}
+				{isError && <div className='error'>{error?.message}</div>}
 				<div className={classes['products__group']}>
 					{products?.map((item) => {
 						return (
@@ -73,10 +53,20 @@ const Products = (props: { categoryId: number | undefined }) => {
 								<div className={classes['products__image']}>
 									<Link
 										to={`/category/${categoryId}/product/${item.id}`}>
-										<img
-											src={`${configData.IMAGES}/products/${item.image}`}
-											alt={item.title}
-										/>
+										{item.image ? (
+											<Image
+												src={[
+													`${configData.IMAGES}/products/${item.image}`,
+													`${configData.IMAGES}/products/default_image.png`,
+												]}
+												alt={item.title}
+											/>
+										) : (
+											<img
+												src={`${configData.IMAGES}/products/default_image.png`}
+												alt={item.title}
+											/>
+										)}
 									</Link>
 								</div>
 								<h2 className={classes['products-title']}>
@@ -88,17 +78,19 @@ const Products = (props: { categoryId: number | undefined }) => {
 								<ul className={classes['products-pricing']}>
 									{item.pricing.map((price) => {
 										return (
-											<li>
-												{parser(price.description)}:
-												&nbsp;{' '}
+											<li
+												key={price.key}
+												id={`price-${price.key}`}>
 												<span
 													className={
 														classes[
 															'products-pricing-usd'
 														]
 													}>
-													{price.price}
+													{price.price.toFixed(2)}
 												</span>
+												&nbsp; / &nbsp;{' '}
+												{parser(price.units)}
 											</li>
 										);
 									})}

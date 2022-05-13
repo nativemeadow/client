@@ -10,44 +10,33 @@ import configData from '../../config.json';
 import classes from './category-list.module.css';
 
 const CategoryList = () => {
-	const [categoryGroup, setCategoryGroup] = useState<Category[]>([]);
-	const { isLoading, isError, data, error } = useQuery<
-		{ data: Category[] },
-		Error
-	>('categories', async () => {
-		const data = await httpFetch<{ data: Category[] }>(
-			`${configData.BACKEND_URL}/categories`
-		);
-		setCategoryGroup(data?.data);
-		return data;
+	const {
+		isLoading,
+		isError,
+		data: categoryGroup,
+		error,
+	} = useQuery<Category[], Error>('categories', async () => {
+		try {
+			return await httpFetch<Category[]>(
+				`${configData.BACKEND_URL}/categories`
+			);
+		} catch (error: any) {
+			throw new Error(error);
+		}
 	});
-
-	if (isLoading) {
-		return <span>Loading...</span>;
-	}
-
-	if (isError) {
-		return <span>Error: {error}</span>;
-	}
-
-	const parser = (input: string) =>
-		parse(input, {
-			replace: (domNode) => {
-				if (domNode instanceof Element) {
-					return <></>;
-				}
-			},
-		});
 
 	const gridItem = 'product-gallery__';
 	return (
 		<div className={classes['product-gallery']}>
-			<h2
-				className={`${classes['product-gallery__heading']} ${classes['product-gallery__title']}`}>
-				Browse Our Product Categories
-			</h2>
+			<h1 className='page_title'>Browse Our Landscaping Materials</h1>
+			{isLoading && (
+				<div className='center'>
+					<LoadingSpinner asOverlay />
+				</div>
+			)}
+			{isError && <div className='error'>{error?.message}</div>}
 			<div className={classes['product-gallery__grid']}>
-				{categoryGroup.map((item) => {
+				{categoryGroup?.map((item) => {
 					return (
 						<div
 							key={item.id}

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import parse, { Element } from 'html-react-parser';
 
-import { useHttpClient } from '../../shared/hooks/http-hooks';
+import React from 'react';
+import { useQuery } from 'react-query';
+import { Link } from 'react-router-dom';
+import httpFetch from '../../shared/http/http-fetch';
+import { parser } from '../../shared/util/html-parse';
 import configData from '../../config.json';
 import { BreadCrumbItem } from './breadcrumb-item';
 
@@ -11,34 +12,25 @@ import classes from './bread-crumbs.module.css';
 type CategoryProps = { categoryId: string | undefined; productId?: string };
 
 const BreadCrumbs: React.FC<CategoryProps> = ({ categoryId }) => {
-	const { error, sendRequest } = useHttpClient();
-	const [BreadCrumbItem, setBreadCrumbItem] = useState<BreadCrumbItem[]>();
-
-	useEffect(() => {
-		const fetchCategory = async () => {
+	const {
+		isLoading,
+		isError,
+		data: BreadCrumbItem,
+		error,
+	} = useQuery<BreadCrumbItem[], Error>(
+		['breadcrumbs', categoryId],
+		async () => {
 			try {
-				const data = await sendRequest<BreadCrumbItem[]>(
+				return await httpFetch<BreadCrumbItem[]>(
 					`${configData.BACKEND_URL}/categories/hierarchy/${categoryId}`
 				);
-				setBreadCrumbItem(data);
-			} catch (err) {
-				console.error(err);
+			} catch (error: any) {
+				throw new Error(error);
 			}
-		};
+		}
+	);
 
-		fetchCategory();
-	}, [categoryId, sendRequest]);
-
-	const parser = (input: string) =>
-		parse(input, {
-			replace: (domNode) => {
-				if (domNode instanceof Element) {
-					return <></>;
-				}
-			},
-		});
-
-	if (error) {
+	if (isError) {
 		return <div id={classes['bread-crumbs-wrapper']}>{error}</div>;
 	}
 
@@ -51,7 +43,7 @@ const BreadCrumbs: React.FC<CategoryProps> = ({ categoryId }) => {
 					</li>
 					{BreadCrumbItem?.map((item) => {
 						return (
-							<li id={item.id}>
+							<li key={item.id} id={item.id}>
 								<Link to={`/category/${item.id}`}>
 									{parser(item.title)}
 								</Link>
