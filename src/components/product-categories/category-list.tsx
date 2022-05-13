@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
 import parse, { Element } from 'html-react-parser';
-
+import { parser } from '../../shared/util/html-parse';
 import httpFetch from '../../shared/http/http-fetch';
 import { Category } from '../../shared/interfaces/category-list';
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
 
 import configData from '../../config.json';
 import classes from './category-list.module.css';
