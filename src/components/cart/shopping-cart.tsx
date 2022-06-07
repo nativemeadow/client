@@ -1,11 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { Orders } from '../cart/orders';
 import Image from '../../shared/components/UIElements/Images';
+import { parser } from '../../shared/hooks/html-parse';
 import DeliveryInstructions from './delivery-instructions';
+import { round } from '../../shared/util/math-utilities';
 
 import configData from '../../config.json';
 import classes from './shopping-cart.module.css';
 
+const dollarUSLocale = Intl.NumberFormat('en-US');
 function calculateCost(qty: number, price: number, fixedDec: boolean): number;
 function calculateCost(qty: number, price: number): string;
 function calculateCost(
@@ -13,7 +17,7 @@ function calculateCost(
 	price: number,
 	fixedDec: boolean = false
 ): string | number {
-	let total: number = qty * price;
+	const total: number = qty * price;
 	return fixedDec ? total.toFixed(2) : total;
 }
 
@@ -49,9 +53,12 @@ const ShoppingCart = () => {
 
 		setCartItems((cartItems) => {
 			// clone the array of cart objects
-			let newCartItems = [...cartItems];
+			const newCartItems = [...cartItems];
 			// update the quantity in the clone
-			newCartItems[parseInt(indexKey, 10)].qty = parseInt(newQty);
+			// newCartItems[parseInt(indexKey, 10)].qty = parseInt(newQty, 10);
+			newCartItems[parseInt(indexKey, 10)].qty = round(
+				parseFloat(newQty)
+			);
 			// save update to local storage
 			localStorage.setItem('order', JSON.stringify(newCartItems));
 			// return the cloned and update array to update the cartItems.
@@ -66,7 +73,7 @@ const ShoppingCart = () => {
 
 		setCartItems((cartItems) => {
 			// clone the array of cart objects
-			let newCartItems = [...cartItems];
+			const newCartItems = [...cartItems];
 			// remove the item at the index
 			newCartItems.splice(parseInt(indexKey), 1);
 			// save update to local storage
@@ -108,11 +115,12 @@ const ShoppingCart = () => {
 
 	return (
 		<>
-			<DeliveryInstructions 
-				showDeliveryComments={showDeliveryComments} 
-				setShowDeliveryComments={setShowDeliveryComments} 
+			<DeliveryInstructions
+				showDeliveryComments={showDeliveryComments}
+				setShowDeliveryComments={setShowDeliveryComments}
 				deliveryNotes={deliveryNotes}
-				addDeliveryCommentHandler={addDeliveryCommentHandler} />
+				addDeliveryCommentHandler={addDeliveryCommentHandler}
+			/>
 			<div id={classes['shopping-cart']}>
 				<h3>Shopping Cart</h3>
 				<div className={classes['shopping-cart']}>
@@ -133,35 +141,48 @@ const ShoppingCart = () => {
 													'shopping-cart__order--items-image-title'
 												]
 											}>
-											{order.image ? (
-												<Image
-													src={[
-														`${configData.IMAGES}/products/${order.image}`,
-														`${configData.IMAGES}/products/default_image.png`,
-													]}
-													alt={
-														order.title !==
-														undefined
-															? order.title
-															: ''
-													}
-												/>
-											) : (
-												<img
-													src={`${configData.IMAGES}/products/default_image.png`}
-													alt={order.title}
-												/>
-											)}
+											<Link
+												to={`/category/${order.categoryId}/product/${order.id}/sku/${order.sku}`}>
+												{order.image ? (
+													<img
+														src={`${configData.IMAGES}/products/${order.image}`}
+														alt={
+															order.title !==
+															undefined
+																? order.title
+																: ''
+														}
+													/>
+												) : (
+													// <Image
+													// 	src={[
+													// 		`${configData.IMAGES}/products/${order.image}`,
+													// 		`${configData.IMAGES}/products/default_image.png`,
+													// 	]}
+													// 	alt={
+													// 		order.title !==
+													// 		undefined
+													// 			? order.title
+													// 			: ''
+													// 	}
+													// />
+													<img
+														src={`${configData.IMAGES}/products/default_image.png`}
+														alt={order.title}
+													/>
+												)}
 
-											<p
-												className={
-													classes[
-														'shopping-cart__order--items-title'
-													]
-												}>
-												{order.title}
-											</p>
+												<p
+													className={
+														classes[
+															'shopping-cart__order--items-title'
+														]
+													}>
+													{order.title}
+												</p>
+											</Link>
 										</div>
+
 										<div
 											className={
 												classes[
@@ -184,7 +205,7 @@ const ShoppingCart = () => {
 												type='number'
 												data-order-index={key}
 												min='1'
-												step='any'
+												step='.01'
 												name={`cart_qty_${key}`}
 												value={order.qty}
 												disabled={false}
@@ -205,10 +226,12 @@ const ShoppingCart = () => {
 											}>
 											<p>
 												$
-												{calculateCost(
-													order.qty,
-													order.price,
-													true
+												{dollarUSLocale.format(
+													calculateCost(
+														order.qty,
+														order.price,
+														true
+													)
 												)}
 											</p>
 											<button
@@ -514,7 +537,7 @@ const ShoppingCart = () => {
 					</div>
 					<div className={classes['shopping-cart__order-subtotal']}>
 						<h3>SubTotal</h3>
-						<p>${total.toFixed(2)}</p>
+						<p>${dollarUSLocale.format(total)}</p>
 					</div>
 				</div>
 			</div>

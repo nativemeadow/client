@@ -35,7 +35,7 @@ const Connect: React.FC = () => {
 					<h2 className={classes['newsletter__title']}>
 						Sign Up for our Newsletter
 					</h2>
-					<div className={classes['signup__wrapper']}>
+					{/* <div className={classes['signup__wrapper']}>
 						<form
 							onSubmit={signUpHandler}
 							aria-label='sign up for our newsletter'
@@ -117,26 +117,27 @@ const Connect: React.FC = () => {
 										</div>
 									</li>
 								</ul>
+
+								<div className={emailInput}>
+									<input
+										className={emailInputDisplay}
+										name='email'
+										type='email'
+										placeholder='Your Email Address'
+										required
+										ref={emailRef}
+									/>
+								</div>
+								<div className={classes['button']}>
+									<button
+										className={classes['button__join']}
+										type='submit'>
+										Join
+									</button>
+								</div>
 							</div>
-							<div className={emailInput}>
-								<input
-									className={emailInputDisplay}
-									name='email'
-									type='email'
-									placeholder='Your Email Address'
-									required
-									ref={emailRef}
-								/>
-							</div>
-							<div className={classes['button']}>
-								<button
-									className={classes['button__join']}
-									type='submit'>
-									Join
-								</button>
-							</div>
-						</form>
-					</div>
+						</form> 
+					</div>*/}
 				</div>
 			</section>
 		</Fragment>

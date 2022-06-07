@@ -9,7 +9,7 @@ import { useAuth } from './shared/hooks/auth-hook';
 
 import CategoryDetail from './components/product-categories/category-detail';
 import CategoryList from './components/product-categories/category-list';
-import ProductDetail from './components/product-categories/product-detail';
+import ProductDetail from './components/product-categories/product-detail/product-detail';
 import ShoppingCart from './components/cart/shopping-cart';
 import Registration from './components/users/create-user';
 import UserLogin from './components/users/user-login';
@@ -19,6 +19,7 @@ import Profile from './components/users/profile';
 import ChangePassword from './components/users/change-password';
 
 import TestRedux from './components/product-categories/test-redux';
+import TestImages from './components/product-categories/test-images';
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,10 @@ function App() {
 						<Route path='/' element={<CategoryList />} />
 						<Route path='/home' element={<CategoryList />} />
 						<Route path='/products' element={<CategoryList />} />
+						<Route
+							path='/category/:categoryId/product/:productId/sku/:sku'
+							element={<ProductDetail />}
+						/>
 						<Route
 							path='/category/:categoryId/product/:productId'
 							element={<ProductDetail />}
@@ -87,6 +92,7 @@ function App() {
 							element={<ContentWrapper title={'Contact Us'} />}
 						/>
 						<Route path='/test-redux' element={<TestRedux />} />
+						<Route path='/test-image' element={<TestImages />} />
 					</Route>
 				</Routes>
 			</AuthContext.Provider>

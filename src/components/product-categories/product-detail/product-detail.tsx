@@ -1,42 +1,50 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from 'react-query';
-//import Select from 'react-select';
 
-import BreadCrumbs from '../navigation/bread-crumbs';
-import Modal from '../../shared/components/UIElements/Modal';
-import Button from '../../shared/components/FormElements/Button';
-//import ErrorModal from '../../shared/components/UIElements/ErrorModal';
-import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
-import { Product, Pricing } from '../../shared/interfaces/product';
-import { parser } from '../../shared/util/html-parse';
+import BreadCrumbs from '../../navigation/bread-crumbs';
+import Modal from '../../../shared/components/UIElements/Modal';
+import Button from '../../../shared/components/FormElements/Button';
+//import ErrorModal from '../../../shared/components/UIElements/ErrorModal';
+import LoadingSpinner from '../../../shared/components/UIElements/LoadingSpinner';
+import { Product, Pricing } from '../../../shared/interfaces/product';
+import { parser } from '../../../shared/util/html-parse';
 import parse from 'html-react-parser';
-import ProductBuilder from '../../shared/util/product-builder';
-import configData from '../../config.json';
+import ProductBuilder from '../../../shared/util/product-builder';
+import configData from '../../../config.json';
 import ProductCalculator from './product-calculator';
-import httpFetch from '../../shared/http/http-fetch';
-import Image from '../../shared/components/UIElements/Images';
-import { Orders } from '../cart/orders';
+import httpFetch from '../../../shared/http/http-fetch';
+import Image from '../../../shared/components/UIElements/Images';
+import { Orders } from '../../cart/orders';
+import ProductThumbs from './product-thumbs';
+import AddToCartForm from './product-form';
+import DetailZoom from './detail-zoom';
+import { useWindowSize } from '../../../shared/hooks/widowSize-hook';
 
 import classes from './product-detail.module.css';
 import './product-detail.css';
 
 const productLabelMessage = 'Please Select Product Options';
-type selectListOptions = {
+export type selectListOptions = {
+	sku: string;
+	price: number;
 	units: string;
 	description: string;
 	image: string;
+	coverage: string;
+	coverage_value: number;
+	online_minimum: number;
 };
 const ProductDetail = (props: any) => {
-	const categoryId = useParams().categoryId;
-	const productId = useParams().productId;
+	const { productId, categoryId, sku } = useParams();
+
 	const [products, setProducts] = useState<Product>();
 	const [productSize, setProductSize] = useState('');
-	const [productOptions, setProductOptions] = useState(productLabelMessage);
+	const [productSku, setProductSku] = useState('');
+	const [productOptions, setProductOptions] =
+		useState<string>(productLabelMessage);
 	const [selectList, setSelectList] = useState<selectListOptions[]>([]);
 	const [selectedValue, setSelectedValue] = useState(String);
-	const [selectDetails, setSelectDetails] = useState(<></>);
-	const [convergeValue, setCoverageValue] = useState(0);
 	const [showCalculator, setShowCalculator] = useState(false);
 	const [showAddToCart, setShowAddToCart] = useState(false);
 	const [productQty, setProductQty] = useState<number>(1);
@@ -45,9 +53,31 @@ const ProductDetail = (props: any) => {
 		[]
 	);
 	const [selectedThumb, setSelectedThumb] = useState<string>();
+	const windowSize = useWindowSize();
 
-	const selectedPrice = useRef(0);
-	let navigate = useNavigate();
+	const selectedPriceRef = useRef(0);
+	const selectedUnitRef = useRef('');
+	const productImageRef = useRef('');
+	const coverageValueRef = useRef(0);
+	const navigate = useNavigate();
+
+	const selectProductBySku = useCallback(
+		(productOptions) => {
+			if (sku) {
+				for (const item of productOptions) {
+					if (item.sku === sku) {
+						setSelectedThumb(item.image);
+						setProductSku(item.sku);
+						updateSelectedUnit(item.units);
+						if (item.image && item.image.length > 0) {
+							setProductImage(item.image);
+						}
+					}
+				}
+			}
+		},
+		[sku]
+	);
 
 	const {
 		isLoading,
@@ -74,27 +104,51 @@ const ProductDetail = (props: any) => {
 			setProducts(currentProduct);
 			setProductImage(currentProduct.image);
 			pricing.forEach((price) => {
-				setCoverageValue(price.coverage_value);
+				coverageValueRef.current = price.coverage_value;
 			});
 			// only one unit price
-			currentProduct?.pricing.length! === 1 &&
-				setProductSize(pricing[0].units);
+			if (currentProduct?.pricing.length! === 1) {
+				setProductSize('');
+			}
+
+			productImageRef.current = currentProduct?.image;
 
 			const productOptions = currentProduct?.pricing.map((item) => {
 				return {
+					sku: item.sku,
 					units: item.units,
+					price: item.price,
 					description: item.description,
 					image: item.image,
+					coverage: item.coverage,
+					coverage_value: item.coverage_value,
+					online_minimum: item.online_minimum,
 				};
 			});
 			setSelectList(productOptions);
+
+			selectProductBySku(productOptions);
+
 			// get thumbnail images if any
 			const thumbs = currentProduct?.pricing.filter((price) => {
 				return price.image && price.image.length > 0;
 			});
 			setProductThumbs(thumbs);
+
+			if (currentProduct?.pricing.length === 1) {
+				setProductOptions(
+					currentProduct?.pricing[0].title +
+						`<span className=${classes['products-detail-pricing-usd-selected']}>$` +
+						currentProduct?.pricing[0].price.toFixed(2) +
+						'<span>'
+				);
+			}
 		}
-	}, [productData]);
+	}, [productData, selectProductBySku]);
+
+	const updateProductPrice = (price: number) => {
+		selectedPriceRef.current = price;
+	};
 
 	const productUnit = (units: string) => {
 		let priceTitle = productLabelMessage;
@@ -102,7 +156,7 @@ const ProductDetail = (props: any) => {
 
 		products?.pricing.forEach((price) => {
 			if (price.description + price.units === units) {
-				selectedPrice.current = price.price;
+				selectedPriceRef.current = price.price;
 				return (priceTitle =
 					price.title +
 					`<span className=${classes['products-detail-pricing-usd-selected']}>$` +
@@ -149,75 +203,17 @@ const ProductDetail = (props: any) => {
 		});
 	};
 
-	useEffect(() => {
-		console.log('Converge', convergeValue);
-	}, [convergeValue]);
-
-	useEffect(() => {
-		let selection = <></>;
-
-		if (productSize.indexOf('sk') > -1) {
-			selection = (
-				<div
-					className={classes['product-quantity__selection--message']}>
-					<p>
-						Currently this product is not available for purchase
-						online in the selected quantity. Please select a
-						different option or visit our store to purchase this
-						quantity.
-					</p>
-				</div>
-			);
-		} else {
-			selection = (
-				<>
-					<div className={classes['product-quantity__selection']}>
-						<input
-							className={classes['quantity_entry']}
-							type='number'
-							min='1'
-							step='any'
-							name='cart_qty'
-							value={productQty}
-							onChange={(event) =>
-								setProductQty(parseInt(event.target.value, 10))
-							}
-							disabled={productSize.length === 0}
-						/>
-						<div
-							className={
-								classes['product-quantity__selection--units']
-							}>
-							{productSize}
-						</div>
-						<div
-							className={
-								classes['product-quantity__selection--button']
-							}>
-							<button
-								type='submit'
-								disabled={productSize.length === 0}>
-								Add to Cart
-							</button>
-						</div>
-					</div>
-				</>
-			);
-		}
-		setSelectDetails(selection);
-	}, [productSize, productQty]);
-
 	const addToCartHandler = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		let productJson: Orders;
-		productJson = {
+		const productJson: Orders = {
+			categoryId: products?.categoryId,
 			id: products?.id,
-			sku: products?.sku,
+			sku: productSku,
 			title: products?.title,
-			image: products?.image,
-			price: selectedPrice.current,
+			image: productImageRef.current,
+			price: selectedPriceRef.current,
 			qty: productQty,
-			unit: productSize,
+			unit: selectedUnitRef.current,
 		};
 		let orders: Orders[];
 
@@ -242,16 +238,30 @@ const ProductDetail = (props: any) => {
 
 		localStorage.setItem('order', JSON.stringify(orders));
 		openAddToCartHandler();
-		console.log('add to cart', productJson);
+	};
+
+	const calculatorAddToCartHandler = (
+		event: React.FormEvent<HTMLFormElement>
+	) => {
+		addToCartHandler(event);
+		closeCalculatorHandler();
 	};
 
 	const imageHandler = () => {
+		if (windowSize.width! > 768) {
+			return (
+				<DetailZoom
+					productImage={productImage}
+					defaultImage={'default_image.png'}
+					imagePath={`${configData.IMAGES}/products/`}
+					imageLensSize={products?.imageLensSize}
+					alt={products?.title !== undefined ? products?.title : ''}
+				/>
+			);
+		}
 		return (
-			<Image
-				src={[
-					`${configData.IMAGES}/products/${productImage}`,
-					`${configData.IMAGES}/products/${productImage}`,
-				]}
+			<img
+				src={`${configData.IMAGES}/products/${productImage}`}
 				alt={products?.title !== undefined ? products?.title : ''}
 			/>
 		);
@@ -264,12 +274,13 @@ const ProductDetail = (props: any) => {
 		setSelectedValue(selected);
 		const title = productUnit(selected);
 		setProductOptions(title);
-		// if there are thumbs highlight the thumb selected for in
-		// drop down select list.
+		// if there is thumb highlighted in the drop down select list.
 		if (productThumbs) {
 			selectList.forEach((item) => {
 				if (item.description + item.units === selected) {
 					setSelectedThumb(item.image);
+					setProductSku(item.sku);
+					updateSelectedUnit(item.units);
 					if (item.image && item.image.length > 0) {
 						setProductImage(item.image);
 					}
@@ -278,46 +289,20 @@ const ProductDetail = (props: any) => {
 		}
 	};
 
-	const selectThumb = (
-		event: React.MouseEvent<HTMLImageElement, MouseEvent>
-	) => {
-		const id = event.currentTarget.id.substring(6);
-		if (productThumbs) {
-			const selectedOption =
-				productThumbs[+id].description + productThumbs[+id].units;
-			setSelectedThumb(productThumbs[+id].image);
-			setProductImage(productThumbs[+id].image);
-			setSelectedValue(selectedOption);
-			const title = productUnit(selectedOption);
-			setProductOptions(title);
-		}
+	/**
+	 * Used here and in product-thumbs component to set the value of
+	 * the selectedUnit ref variable.
+	 * @param unit
+	 */
+	const updateSelectedUnit = (unit: string) => {
+		selectedUnitRef.current = unit;
 	};
 
-	const displayProductThumbs = () => {
-		return (
-			<div className={classes['product-detail_variations-grid']}>
-				{productThumbs?.map((price, index) => {
-					return (
-						<div key={index}>
-							<img
-								id={`thumb-${index}`}
-								className={`
-									${classes['product-detail_variations-image']} ${
-									selectedThumb === price.image &&
-									classes[
-										'product-detail_variations-image-selected'
-									]
-								}
-								`}
-								src={`${configData.IMAGES}/products/${price.image}`}
-								alt=''
-								onClick={selectThumb}
-							/>
-						</div>
-					);
-				})}
-			</div>
-		);
+	const updateThumbsImage = (image: string) => {
+		if (image && image.length > 0) {
+			productImageRef.current = image;
+			setProductImage(image);
+		}
 	};
 
 	const openCalculatorHandler = () => {
@@ -353,16 +338,24 @@ const ProductDetail = (props: any) => {
 			<Modal
 				show={showCalculator}
 				onCancel={closeCalculatorHandler}
+				onSubmit={calculatorAddToCartHandler}
 				header={'Calculator'}
 				className='calculator__modal'
-				headerClass='item__modal-header'
+				headerClass={classes['calculator_heading']}
 				contentClass='calculator-item__modal-content'
-				footerClass='calculator-item__modal-actions'
-				footer={
-					<Button onClick={closeCalculatorHandler}>Close</Button>
-				}>
+				footerClass='calculator-item__modal-actions'>
 				<div className={classes['calculator-container']}>
-					<ProductCalculator />
+					<ProductCalculator
+						products={products}
+						productQty={productQty}
+						selectedValue={selectedValue}
+						setProductQty={setProductQty}
+						setSelectedValue={setSelectedValue}
+						updateSelectedUnit={updateSelectedUnit}
+						setProductSku={setProductSku}
+						productSelectHandler={productSelectHandler}
+						updateProductPrice={updateProductPrice}
+					/>
 				</div>
 			</Modal>
 			<Modal
@@ -374,10 +367,14 @@ const ProductDetail = (props: any) => {
 				footerClass='addToCart-item__modal-actions'
 				footer={
 					<>
-						<Button onClick={viewShoppingCartHandler}>
+						<Button
+							className={'addToCartButton'}
+							onClick={viewShoppingCartHandler}>
 							View Cart
 						</Button>
-						<Button onClick={closeAddToCartHandler}>
+						<Button
+							className={'addToCartButton'}
+							onClick={closeAddToCartHandler}>
 							Continue Shopping
 						</Button>
 					</>
@@ -387,7 +384,7 @@ const ProductDetail = (props: any) => {
 					<p>1 Item(s) Consolidated into cart.</p>
 				</div>
 			</Modal>
-			<div className={classes['product-detail_wrapper']}>
+			<div className={classes['product-detail']}>
 				{isLoading && (
 					<div className='center'>
 						<LoadingSpinner asOverlay />
@@ -403,7 +400,18 @@ const ProductDetail = (props: any) => {
 							}>
 							{imageHandler()}
 						</div>
-						{displayProductThumbs()}
+						<ProductThumbs
+							productThumbs={productThumbs}
+							selectedThumb={selectedThumb}
+							setSelectedThumb={setSelectedThumb}
+							setProductImage={setProductImage}
+							setProductSku={setProductSku}
+							setSelectedValue={setSelectedValue}
+							productUnit={productUnit}
+							setProductOptions={setProductOptions}
+							updateSelectedUnit={updateSelectedUnit}
+							updateThumbsImage={updateThumbsImage}
+						/>
 					</div>
 					<div className={classes['product-detail']}>
 						<h1>
@@ -414,51 +422,19 @@ const ProductDetail = (props: any) => {
 						<ul className={classes['products-detail-pricing']}>
 							{filterPricing()}
 						</ul>
-						<form name='addToCart' onSubmit={addToCartHandler}>
-							<div
-								className={
-									classes['product-detail__selection']
-								}>
-								{products?.pricing.length! > 1 && (
-									<p
-										className={
-											classes[
-												'product-detail__select--options'
-											]
-										}>
-										{parse(productOptions)}
-									</p>
-								)}
-								{products?.pricing.length! > 1 && (
-									<select
-										name='product_select'
-										value={selectedValue}
-										onChange={productSelectHandler}
-										className={
-											classes[
-												'products-detail-pricing__select'
-											]
-										}>
-										<option value=''>Select size</option>
-										{selectList.map((price, key) => {
-											return (
-												<option
-													key={key}
-													value={
-														price.description +
-														price.units
-													}>
-													{price.description}
-												</option>
-											);
-										})}
-									</select>
-								)}
-							</div>
-
-							{selectDetails}
-						</form>
-						{convergeValue && calculator()}
+						<AddToCartForm
+							products={products}
+							productSize={productSize}
+							productQty={productQty}
+							selectedValue={selectedValue}
+							selectList={selectList}
+							productThumbs={productThumbs}
+							productOptions={productOptions}
+							setProductQty={setProductQty}
+							addToCartHandler={addToCartHandler}
+							productSelectHandler={productSelectHandler}
+						/>
+						{coverageValueRef.current ? calculator() : ''}
 						<div className={classes['product-detail__description']}>
 							{products?.description !== undefined
 								? parse(products?.description)

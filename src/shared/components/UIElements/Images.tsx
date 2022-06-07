@@ -1,5 +1,6 @@
 import React, { Suspense } from 'react';
 import { useImage } from 'react-image';
+//import useImage from '../../../shared/hooks/use-image';
 
 import LoadingSpinner from '../../../shared/components/UIElements/LoadingSpinner';
 
@@ -18,7 +19,7 @@ function ImageComponent(props: image_data) {
 		<img
 			src={src}
 			alt={props.alt}
-			className={props.cssClass && props.cssClass}
+			className={props.cssClass}
 			onClick={props.onClick}
 		/>
 	);

@@ -48,7 +48,7 @@ const Products = (props: { categoryId: number | undefined }) => {
 				<div className={classes['products__group']}>
 					{products?.map((item, index) => {
 						return (
-							<div key={index}>
+							<div key={index} className={classes['card-width']}>
 								<ProductCard
 									product={item}
 									categoryId={categoryId}

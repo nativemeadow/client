@@ -23,14 +23,27 @@
 	text-align: right;
 }
 
-.addToCart-item__modal-actions {
-	text-align: right;
+.addToCart-item__modal-actions button {
+	margin: 0;
+}
+
+@media (max-width: 640px) {
+	.calculator__modal {
+		top: 12vh;
+	}
+}
+
+@media (min-width: 769px) {
+	.calculator__modal {
+		/* min-height: 40rem; */
+	}
 }
 
 @media (min-width: 1150px) {
 	.calculator__modal {
-		left: calc(35% - 10rem);
+		/* left: calc(35% - 10rem); */
 		max-width: 50rem;
 		width: 70%;
+		/* min-height: 40rem; */
 	}
 }

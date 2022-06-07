@@ -8,21 +8,20 @@ const DeliveryInstructions = ({
 	showDeliveryComments,
 	setShowDeliveryComments,
 	deliveryNotes,
-	addDeliveryCommentHandler
+	addDeliveryCommentHandler,
 }: {
 	showDeliveryComments: any;
 	setShowDeliveryComments: any;
 	deliveryNotes: any;
 	addDeliveryCommentHandler: any;
 }) => {
-
 	const closeDeliveryComments = () => {
 		setShowDeliveryComments(false);
 	};
 
 	const onChangeHandler = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
 		deliveryNotes.current = event.target.value;
-	}
+	};
 
 	return (
 		<div>
