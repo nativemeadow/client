@@ -1,9 +1,9 @@
 import { QueryClient } from 'react-query';
 
 const client = new QueryClient({
-    defaultOPtions: {
+    defaultOptions: {
         queries: {
-            staleTime: 10000,
+            staleTime: 1000 * 60,
             cacheTime: 10000
         }
     }

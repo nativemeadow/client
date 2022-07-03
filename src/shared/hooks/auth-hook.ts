@@ -7,34 +7,47 @@ export const useAuth = () => {
 	const [tokenExpirationDate, setTokenExpirationDate] =
 		useState<Date | null>();
 	const [userId, setUserId] = useState(null);
+	const [firstName, setFirstName] = useState(null);
+	const [lastName, setLastName] = useState(null);
 
-	const login = useCallback((uid, token, expirationDate?) => {
-		setToken(token);
-		setUserId(uid);
-		const tokenExpirationDate =
-			expirationDate || new Date(new Date().getTime() + 1000 * 60 * 60);
-		setTokenExpirationDate(tokenExpirationDate);
-		try {
-			localStorage.setItem(
-				'userData',
-				JSON.stringify({
-					userId: uid,
-					token: token,
-					expiration: tokenExpirationDate.toISOString(),
-				})
+	const login = useCallback(
+		(uid, firstName, lastName, token, expirationDate?) => {
+			setToken(token);
+			setFirstName(firstName);
+			setLastName(lastName);
+			setUserId(uid);
+			const tokenExpirationDate =
+				expirationDate ||
+				new Date(new Date().getTime() + 1000 * 60 * 60);
+			setTokenExpirationDate(tokenExpirationDate);
+			try {
+				sessionStorage.setItem(
+					'userData',
+					JSON.stringify({
+						userId: uid,
+						firstName: firstName,
+						lastName: lastName,
+						token: token,
+						expiration: tokenExpirationDate.toISOString(),
+					})
+				);
+			} catch (err) {
+				console.log(err);
+			}
+
+			console.log(
+				'sessionStorage: userData',
+				sessionStorage.getItem('userData')
 			);
-		} catch (err) {
-			console.log(err);
-		}
-
-		console.log('localStorage: userData', localStorage.getItem('userData'));
-	}, []);
+		},
+		[]
+	);
 
 	const logout = useCallback(() => {
 		setToken(null);
 		setTokenExpirationDate(null);
 		setUserId(null);
-		localStorage.removeItem('userData');
+		sessionStorage.removeItem('userData');
 	}, []);
 
 	useEffect(() => {
@@ -48,8 +61,8 @@ export const useAuth = () => {
 	}, [token, logout, tokenExpirationDate]);
 
 	useEffect(() => {
-		const storedData = localStorage.getItem('userData')
-			? JSON.parse(localStorage.getItem('userData')!)
+		const storedData = sessionStorage.getItem('userData')
+			? JSON.parse(sessionStorage.getItem('userData')!)
 			: null;
 		if (
 			storedData &&
@@ -58,11 +71,13 @@ export const useAuth = () => {
 		) {
 			login(
 				storedData.userId,
+				storedData.firstName,
+				storedData.lastName,
 				storedData.token,
 				new Date(storedData.expiration)
 			);
 		}
 	}, [login]);
 
-	return { userId, token, login, logout };
+	return { userId, firstName, lastName, token, login, logout };
 };

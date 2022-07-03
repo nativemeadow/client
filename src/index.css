@@ -4,6 +4,9 @@
 :root {
 	--max-container-size: 71.25rem;
 	--min-container-size: 13.5rem;
+	--body-text-color: #4d4d4d;
+	--border-color: #aa081e;
+	--anchor-color: #d71a20;
 }
 
 *,
@@ -21,7 +24,7 @@ body {
 	height: 100%;
 	width: 100%;
 	font-family: 'Raleway', sans-serif;
-	color: #4d4d4d;
+	color: var(--body-text-color);
 	font-size: 14px;
 	line-height: normal;
 	font-weight: normal;
@@ -38,12 +41,12 @@ h4 {
 	padding: 0;
 }
 
-h1,
+/* h1,
 h2,
 h3,
 h4 {
 	font-family: 'Aleo', serif;
-}
+} */
 
 .h3,
 h3 {

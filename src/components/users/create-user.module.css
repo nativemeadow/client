@@ -18,9 +18,14 @@
 }
 
 .reg-login__name-address-heading,
+.reg-login__heading,
 .reg-login__company-heading {
 	font-family: 'Raleway', sans-serif;
 	font-weight: 600;
+}
+
+.reg-login__heading {
+	margin-bottom: 1rem;
 }
 
 .reg-login__name-address-heading {

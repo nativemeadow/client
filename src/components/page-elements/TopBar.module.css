@@ -44,11 +44,11 @@
 }
 
 .button--default {
-	border: none;
 	font-weight: bold;
-	padding-bottom: 0.5rem;
 	color: #231f20;
 	background-color: #ece8e1;
 	padding: 0;
 	margin: 0;
+	margin-left: 1rem;
+	margin-top: 1rem;
 }

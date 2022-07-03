@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { statesProvinces, countries } from '../../shared/util/location-lookup';
+import { useNavigate, useLocation } from 'react-router-dom';
 import httpFetch from '../../shared/http/http-fetch';
 import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import { FormInput } from '../../shared/interfaces/user';
+import ProfileInformation from './profile-information';
 import configData from '../../config.json';
 
 import classes from './create-user.module.css';
 
+const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
+const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+
 export default function Registration() {
-	let navigate = useNavigate();
+	const navigate = useNavigate();
+	const location = useLocation();
 	const [error, setError] = useState<string | null>(null);
 	const [inputVal, setInputVal] = useState<FormInput>({
 		username: '',
@@ -53,7 +57,9 @@ export default function Registration() {
 			);
 			console.log(responseData);
 			if (!responseData.message) {
-				navigate('/user/create-account-success');
+				navigate('/login', {
+					state: { replace: true, from: location },
+				});
 			} else {
 				setError(responseData.message);
 			}
@@ -88,6 +94,9 @@ export default function Registration() {
 		<>
 			<ErrorModal error={formatError(error)} onClear={errorHandler} />
 			<div className={classes['reg-login__container']}>
+				<h1 className={classes['reg-login__heading']}>
+					Create Your Account
+				</h1>
 				<h2 className={classes['reg-login__company-heading']}>
 					Login Information
 				</h2>
@@ -138,179 +147,11 @@ export default function Registration() {
 							/>
 						</div>
 					</div>
-					<h2 className={classes['reg-login__name-address-heading']}>
-						Name &amp; Address
-					</h2>
-					<div className={classes['reg-login-name-address']}>
-						<div className={classes['reg-login-fields']}>
-							<label
-								className={classes['reg-login__label']}
-								htmlFor='first_name'>
-								First name
-							</label>
-							<input
-								type='text'
-								id='first_name'
-								name='firstName'
-								value={inputVal.firstName}
-								onChange={changeHandler}
-							/>
-						</div>
-						<div className={classes['reg-login-fields']}>
-							<label
-								className={classes['reg-login__label']}
-								htmlFor='last_name'>
-								Last name
-							</label>
-							<input
-								type='text'
-								id='last_name'
-								name='lastName'
-								value={inputVal.lastName}
-								onChange={changeHandler}
-							/>
-						</div>
-						<div className={classes['reg-login-fields']}>
-							<label
-								className={classes['reg-login__label']}
-								htmlFor='phone'>
-								Phone
-							</label>
-							<input
-								type='text'
-								id='phone'
-								name='phone'
-								value={inputVal.phone}
-								onChange={changeHandler}
-							/>
-						</div>
-						<div className={classes['reg-login-fields']}>
-							<label
-								className={classes['reg-login__label']}
-								htmlFor='email'>
-								Email Address
-							</label>
-							<input
-								type='text'
-								id='email'
-								name='email'
-								value={inputVal.email}
-								onChange={changeHandler}
-							/>
-						</div>
-						<div className={classes['reg-login-fields']}>
-							<label
-								className={classes['reg-login__label']}
-								htmlFor='address'>
-								Address
-							</label>
-							<input
-								type='text'
-								id='address'
-								name='address'
-								value={inputVal.address}
-								onChange={changeHandler}
-							/>
-						</div>
-						<div className={classes['reg-login-fields']}>
-							<label
-								className={classes['reg-login__label']}
-								htmlFor='city'>
-								City
-							</label>
-							<input
-								type='text'
-								id='city'
-								name='city'
-								value={inputVal.city}
-								onChange={changeHandler}
-							/>
-						</div>
-						<div className={classes['reg-login-fields']}>
-							<label
-								className={classes['reg-login__label']}
-								htmlFor='country'>
-								Country
-							</label>
-							<select
-								className={classes['reg-login__select']}
-								id='country'
-								onChange={selectChangeHandler}
-								value={inputVal.country}
-								name='country'>
-								{countries.map((country, index) => {
-									return (
-										<option
-											key={index}
-											value={country.code}>
-											{country.name}
-										</option>
-									);
-								})}
-							</select>
-						</div>
-						<div className={classes['reg-login-fields']}>
-							<label
-								className={classes['reg-login__label']}
-								htmlFor='state'>
-								State / Province
-							</label>
-							<select
-								className={classes['reg-login__select']}
-								id='state'
-								onChange={selectChangeHandler}
-								value={inputVal.state}
-								name='state'>
-								{statesProvinces[0].states.map(
-									(state, index) => {
-										return (
-											<option
-												key={index}
-												value={state.abbreviation}>
-												{state.name}
-											</option>
-										);
-									}
-								)}
-							</select>
-						</div>
-						<div className={classes['reg-login-fields']}>
-							<label
-								className={classes['reg-login__label']}
-								htmlFor='postal_code'>
-								Postal Code
-							</label>
-							<input
-								type='text'
-								id='postal_code'
-								name='postalCode'
-								value={inputVal.postalCode}
-								onChange={changeHandler}
-							/>
-						</div>
-						<h2 className={classes['reg-login__company-heading']}>
-							Company
-						</h2>
-						<div className={classes['reg-login-fields']}>
-							<label
-								className={classes['reg-login__label']}
-								htmlFor='company'>
-								Company
-							</label>
-							<input
-								type='text'
-								id='company'
-								name='company'
-								value={inputVal.company}
-								onChange={changeHandler}
-							/>
-						</div>
-						<button
-							className={classes['reg-login__button']}
-							type='submit'>
-							Continue
-						</button>
-					</div>
+					<ProfileInformation
+						inputVal={inputVal}
+						changeHandler={changeHandler}
+						selectChangeHandler={selectChangeHandler}
+					/>
 				</form>
 			</div>
 		</>

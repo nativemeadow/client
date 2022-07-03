@@ -60,7 +60,7 @@ const CategoryDetail = () => {
 					{parentCategory?.description?.length &&
 						parse(parentCategory?.description)}
 				</div>
-				<div className={classes['category__list']}></div>
+				{/* <div className={classes['category__list']}></div> */}
 
 				<div className={classes['category__group']}>
 					{categoryGroup?.map((item) => {

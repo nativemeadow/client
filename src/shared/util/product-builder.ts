@@ -8,6 +8,7 @@ function ProductBuilder(prod: Product) {
 		title: prod.title,
 		description: prod.description,
 		image: prod.image,
+		imageLensSize: prod.imageLensSize,
 		pricing: prod.pricing,
 	};
 	return currentProduct;

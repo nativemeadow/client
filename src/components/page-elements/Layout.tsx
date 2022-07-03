@@ -1,3 +1,4 @@
+import React from 'react';
 import { Outlet } from 'react-router-dom';
 
 import TopBar from '../../components/page-elements/TopBar';
@@ -11,9 +12,9 @@ const Layout = (props: {}) => {
 		<>
 			<TopBar />
 			<HeaderNav />
-			<div className='container'>
+			<main className='container'>
 				<Outlet />
-			</div>
+			</main>
 			<Signup />
 			<Connect />
 			<Footer />

@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../shared/context/auth-context';
 import httpFetch from '../../shared/http/http-fetch';
 import ErrorModal from '../../shared/components/UIElements/ErrorModal';
@@ -12,14 +12,25 @@ type FormInput = {
 	password: '';
 };
 
+interface StateType {
+	from: {
+		pathname: string;
+		state: StateType[];
+	};
+}
+
 export default function UserLogin() {
 	const auth = useContext(AuthContext);
 	const navigate = useNavigate();
+	const location = useLocation();
+	const state = location.state as StateType;
 	const [error, setError] = useState<string | null>(null);
 	const [inputVal, setInputVal] = useState<FormInput>({
 		username: '',
 		password: '',
 	});
+
+	console.log('router state: ', state && state.from);
 	const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const val = event.target.value;
 		const name = event.target.name;
@@ -40,9 +51,22 @@ export default function UserLogin() {
 			);
 			console.log(responseData);
 			if (!responseData.message) {
-				auth.login(responseData.userId, responseData.token);
-				// navigate('/user/create-account-success');
-				navigate(-1);
+				auth.login(
+					responseData.userId,
+					responseData.firstName,
+					responseData.lastName,
+					responseData.token
+				);
+				console.log('location from: ', state && state.from);
+				if (state && state.from) {
+					if (state.from.pathname.indexOf('create-account') > -1) {
+						navigate('/');
+					} else {
+						navigate(state.from);
+					}
+				} else {
+					navigate('/');
+				}
 			} else {
 				setError(responseData.message);
 			}
@@ -125,27 +149,37 @@ export default function UserLogin() {
 							Click here to reset you password.
 						</Link>
 					</div>
-
 					<div className={classes['login__new-account']}>
-						<h2>New Account Sign Up</h2>
-						<p>
-							If you do not have an online account, you can create
-							one here.
-						</p>
-						<Link
-							className={classes['create-account__button']}
-							to='/user/create-account'>
-							Sign Up
-						</Link>
-						<h4>Accounts Receivable?</h4>
-						[+]&nbsp;
-						<Link
-							className={classes['create-account__link']}
-							to='/user/create-account'>
-							If you already have a credit account with us, sign
-							up to access your existing Accounts Receivable
-							account on-line
-						</Link>
+						{state.from.pathname === '/user/create-account' ? (
+							<>
+								<h2>Your Account has been created</h2>
+								<p>Please login</p>
+							</>
+						) : (
+							<>
+								<h2>New Account Sign Up</h2>
+								<p>
+									If you do not have an online account, you
+									can create one here.
+								</p>
+								<Link
+									className={
+										classes['create-account__button']
+									}
+									to='/user/create-account'>
+									Sign Up
+								</Link>
+								<h4>Accounts Receivable?</h4>
+								[+]&nbsp;
+								<Link
+									className={classes['create-account__link']}
+									to='/user/create-account'>
+									If you already have a credit account with
+									us, sign up to access your existing Accounts
+									Receivable account on-line
+								</Link>
+							</>
+						)}
 					</div>
 				</div>
 			</div>
