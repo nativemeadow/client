@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import classes from './Connect.module.css';
 
 const productTitle =
@@ -89,60 +90,60 @@ const Connect: React.FC = () => {
 					<h3 className={productTitle}>Products</h3>
 					<ul className={classes['product__items']}>
 						<li className={classes['product__item']}>
-							<a
+							<Link
 								className={classes['product-item__link']}
-								href='#'>
+								to='/category/1'>
 								Sand, Gravel &amp; Decorative Aggregates
-							</a>
+							</Link>
 						</li>
 						<li className={classes['product__item']}>
-							<a
+							<Link
 								className={classes['product-item__link']}
-								href='#'>
+								to='/category/3'>
 								Composts, Mulches, Soils &amp; Amendments
-							</a>
+							</Link>
 						</li>
 						<li className={classes['product__item']}>
-							<a
+							<Link
 								className={classes['product-item__link']}
-								href='#'>
+								to='/category/4'>
 								Biologicals, Fertilizers &amp; Bagged Soils
-							</a>
+							</Link>
 						</li>
 						<li className={classes['product__item']}>
-							<a
+							<Link
 								className={classes['product-item__link']}
-								href='#'>
+								to='/category/2'>
 								Natural Stone
-							</a>
+							</Link>
 						</li>
 						<li className={classes['product__item']}>
-							<a
+							<Link
 								className={classes['product-item__link']}
-								href='#'>
+								to='/category/5'>
 								Pottery &amp; Garden Ornaments
-							</a>
+							</Link>
 						</li>
 						<li className={classes['product__item']}>
-							<a
+							<Link
 								className={classes['product-item__link']}
-								href='#'>
+								to='/category/6'>
 								Water Features
-							</a>
+							</Link>
 						</li>
 						<li className={classes['product__item']}>
-							<a
+							<Link
 								className={classes['product-item__link']}
-								href='#'>
+								to='/category/7'>
 								Building Materials &amp; Tools
-							</a>
+							</Link>
 						</li>
 						<li className={classes['product__item']}>
-							<a
+							<Link
 								className={classes['product-item__link']}
-								href='#'>
+								to='/category/8'>
 								Precast Concrete Products
-							</a>
+							</Link>
 						</li>
 					</ul>
 					<h3 className={addressTitle}>Address</h3>

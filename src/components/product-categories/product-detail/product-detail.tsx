@@ -20,6 +20,7 @@ import ProductThumbs from './product-thumbs';
 import AddToCartForm from './product-form';
 import DetailZoom from './detail-zoom';
 import { useWindowSize } from '../../../shared/hooks/widowSize-hook';
+import useStore from '../../../zustand/store';
 
 import classes from './product-detail.module.css';
 import './product-detail.css';
@@ -59,6 +60,14 @@ const ProductDetail = (props: any) => {
 	const selectedUnitRef = useRef('');
 	const productImageRef = useRef('');
 	const coverageValueRef = useRef(0);
+
+	const {
+		extendedValue,
+		extendedRules,
+		removeExtendedValue,
+		removeExtendedRule,
+	} = useStore();
+
 	const navigate = useNavigate();
 
 	const selectProductBySku = useCallback(
@@ -95,6 +104,12 @@ const ProductDetail = (props: any) => {
 	});
 
 	useEffect(() => {
+		// clear extended value and rules from zustand store when product detail is mounted
+		removeExtendedValue();
+		removeExtendedRule();
+	}, []);
+
+	useEffect(() => {
 		let currentProduct;
 		let pricing: Pricing[];
 		if (productData) {
@@ -107,13 +122,13 @@ const ProductDetail = (props: any) => {
 				coverageValueRef.current = price.coverage_value;
 			});
 			// only one unit price
-			if (currentProduct?.pricing.length! === 1) {
+			if (currentProduct && currentProduct.pricing.length === 1) {
 				setProductSize('');
 			}
 
 			productImageRef.current = currentProduct?.image;
 
-			const productOptions = currentProduct?.pricing.map((item) => {
+			const productOptions = currentProduct.pricing.map((item) => {
 				return {
 					sku: item.sku,
 					units: item.units,
@@ -130,12 +145,12 @@ const ProductDetail = (props: any) => {
 			selectProductBySku(productOptions);
 
 			// get thumbnail images if any
-			const thumbs = currentProduct?.pricing.filter((price) => {
+			const thumbs = currentProduct.pricing.filter((price) => {
 				return price.image && price.image.length > 0;
 			});
 			setProductThumbs(thumbs);
 
-			if (currentProduct?.pricing.length === 1) {
+			if (currentProduct.pricing.length === 1) {
 				setProductOptions(
 					currentProduct?.pricing[0].title +
 						`<span className=${classes['products-detail-pricing-usd-selected']}>$` +
@@ -186,9 +201,13 @@ const ProductDetail = (props: any) => {
 	};
 
 	const filterPricing = () => {
-		const filterPrices = products?.pricing.filter((value, index, array) => {
-			return index === array.findIndex((t) => t.price === value.price);
-		});
+		const filterPrices =
+			products &&
+			products.pricing.filter((value, index, array) => {
+				return (
+					index === array.findIndex((t) => t.price === value.price)
+				);
+			});
 
 		return filterPrices?.map((price, key) => {
 			return (
@@ -214,6 +233,7 @@ const ProductDetail = (props: any) => {
 			price: selectedPriceRef.current,
 			qty: productQty,
 			unit: selectedUnitRef.current,
+			color: extendedValue,
 		};
 		let orders: Orders[];
 
@@ -238,6 +258,12 @@ const ProductDetail = (props: any) => {
 
 		localStorage.setItem('order', JSON.stringify(orders));
 		openAddToCartHandler();
+	};
+
+	const handleExtendedInfo = (
+		event: React.ChangeEvent<HTMLSelectElement>
+	) => {
+		const value = event.target.value;
 	};
 
 	const calculatorAddToCartHandler = (
@@ -341,7 +367,7 @@ const ProductDetail = (props: any) => {
 				onSubmit={calculatorAddToCartHandler}
 				header={'Calculator'}
 				className='calculator__modal'
-				headerClass={classes['calculator_heading']}
+				headerClass={` font-bold text-lg ${classes['calculator_heading']}`}
 				contentClass='calculator-item__modal-content'
 				footerClass='calculator-item__modal-actions'>
 				<div className={classes['calculator-container']}>

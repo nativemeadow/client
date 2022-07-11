@@ -1,6 +1,8 @@
 import React, { useEffect, useState, Dispatch, SetStateAction } from 'react';
 import { Product, Pricing } from '../../../shared/interfaces/product';
 import { selectListOptions } from './product-detail';
+import ProductExtended from './product-extended';
+import useStore from '../../../zustand/store';
 
 import parse from 'html-react-parser';
 import classes from './product-detail.module.css';
@@ -31,60 +33,51 @@ const ProductForm: React.FC<Props> = ({
 	productSelectHandler,
 }) => {
 	const [selectDetails, setSelectDetails] = useState(<></>);
+	const { extendedValue, extendedRules } = useStore();
 
 	useEffect(() => {
 		let selection = <></>;
 
-		if (productSize.indexOf('sk') > -1) {
-			selection = (
-				<div
-					className={classes['product-quantity__selection--message']}>
-					<p>
-						Currently this product is not available for purchase
-						online in the selected quantity. Please select a
-						different option or visit our store to purchase this
-						quantity.
-					</p>
+		selection = productSize.includes('sk') ? (
+			<div className={classes['product-quantity__selection--message']}>
+				<p>
+					Currently this product is not available for purchase online
+					in the selected quantity. Please select a different option
+					or visit our store to purchase this quantity.
+				</p>
+			</div>
+		) : (
+			<div className={classes['product-quantity__selection']}>
+				<input
+					className={classes['quantity_entry']}
+					type='number'
+					min='1'
+					step='any'
+					name='cart_qty'
+					value={productQty.toFixed(2)}
+					onChange={(event) =>
+						setProductQty(parseInt(event.target.value, 10))
+					}
+					disabled={productSize.length === 0}
+				/>
+				<div className={classes['product-quantity__selection--units']}>
+					{/* {!productThumbs
+						? productSize
+						: removeDuplicateCharacters(productSize)} */}
 				</div>
-			);
-		} else {
-			selection = (
-				<div className={classes['product-quantity__selection']}>
-					<input
-						className={classes['quantity_entry']}
-						type='number'
-						min='1'
-						step='any'
-						name='cart_qty'
-						value={productQty.toFixed(2)}
-						onChange={(event) =>
-							setProductQty(parseInt(event.target.value, 10))
-						}
-						disabled={productSize.length === 0}
-					/>
-					<div
-						className={
-							classes['product-quantity__selection--units']
-						}>
-						{/* {!productThumbs
-							? productSize
-							: removeDuplicateCharacters(productSize)} */}
-					</div>
-					<div
-						className={
-							classes['product-quantity__selection--button']
-						}>
-						<button
-							type='submit'
-							disabled={productSize.length === 0}>
-							Add to Cart
-						</button>
-					</div>
+				<div className={classes['product-quantity__selection--button']}>
+					<button type='submit' disabled={productSize.length === 0}>
+						Add to Cart
+					</button>
 				</div>
-			);
-		}
+			</div>
+		);
 		setSelectDetails(selection);
 	}, [productSize, productQty, productThumbs, setProductQty]);
+
+	useEffect(() => {
+		console.log('extendedValue', extendedValue);
+	}, [extendedValue]);
 
 	return (
 		<form name='addToCart' onSubmit={addToCartHandler}>
@@ -94,12 +87,16 @@ const ProductForm: React.FC<Props> = ({
 						{parse(productOptions)}
 					</p>
 				)}
+				{products.extended && <ProductExtended products={products} />}
 				{products?.pricing.length! > 0 && (
 					<select
 						name='product_select'
 						value={selectedValue}
 						onChange={productSelectHandler}
-						className={classes['products-detail-pricing__select']}>
+						className={`${classes['products-detail-pricing__select']} form-select `}
+						disabled={
+							!!products.extended && extendedValue.length === 0
+						}>
 						<option value=''>Select size</option>
 						{selectList.map((price, key) => {
 							return (

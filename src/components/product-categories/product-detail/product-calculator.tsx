@@ -378,7 +378,7 @@ const ProductCalculator: React.FC<Props> = ({
 						ref={depthRef}
 					/>
 					<ul className={classes['depth-radio-set']}>
-						<li>
+						<li className='pl-1'>
 							<input
 								id='calc-inch'
 								name='depthMeasure'
@@ -391,7 +391,7 @@ const ProductCalculator: React.FC<Props> = ({
 							/>
 							inches
 						</li>
-						<li>
+						<li className='pl-1 pt-1'>
 							<input
 								id='calc-foot'
 								name='depthMeasure'
@@ -439,48 +439,60 @@ const ProductCalculator: React.FC<Props> = ({
 			)}
 
 			<div className={classes['calculated-amount-result']}>
-				<div className={classes['calculated-amount-result-wrapper']}>
+				<div
+					className={`row-start-1 row-end-1 col-start-1 col-span-1 ${classes['calculated-amount-result-wrapper']}`}>
 					<div className={classes['calculated-amount-result-grp']}>
 						{neededUnit && resultsLabels[neededUnit].needed}
 					</div>
 				</div>
-				<div className={classes['calculated-amount-result-grp']}>
+				<div
+					className={`row-start-2 row-end-2 col-start-1 col-span-1 md:row-start-1 md:row-end-1 md:col-start-2 md:col-span-1 ${classes['calculated-amount-result-grp']}`}>
 					{neededUnit && resultsLabels[neededUnit].deliverymin}
 				</div>
-				<div className={`${classes['maths']}`}>
+				<div
+					className={`row-start-3 row-end-3 col-start-1 col-span-1 md:row-start-1 md:row-end-1 md:col-start-3  md:col-span-1 ${classes['maths']}`}>
 					<span>×</span>
 				</div>
-				<div className={classes['calculated-amount-result-grp']}>
+				<div
+					className={`row-start-4 row-end-4 col-start-1 col-span-1 md:row-start-1 md:row-end-1 md:col-start-4 md:col-span-1 ${classes['calculated-amount-result-grp']}`}>
 					{neededUnit && resultsLabels[neededUnit].cost}
 				</div>
-				<div className={`${classes['maths']}`}>
+				<div
+					className={`row-start-5 row-end-5 col-start-1 col-span-1 md:row-start-1 md:row-end-1 md:col-start-5 md:col-span-1 ${classes['maths']}`}>
 					<span>=</span>
 				</div>
-				<div className={classes['calculated-amount-result-grp']}>
+				<div
+					className={`row-start-6 row-end-6 col-start-1 col-span-1 md:row-start-1 md:row-end-1 md:col-start-6 md:col-span-1 ${classes['calculated-amount-result-grp']}`}>
 					<span className={classes['calculated-label']}>
 						Subtotal
 					</span>
 				</div>
-				<div className={classes['calculated-amount-result-grp']}>
+				<div
+					className={`row-start-1 row-end-1 col-start-2 md:row-start-2 md:row-end-2 md:col-start-1 col-span-1  ${classes['calculated-amount-result-grp']}`}>
 					<span
 						id='cubic-result'
 						className={classes['calculated-total-amount']}>
 						{calculatedAreaRef.current}
 					</span>
 				</div>
-				<div className={classes['calculated-amount-result-grp']}>
+				<div
+					className={`row-start-2 row-end-2 col-start-2 col-span-1 md:row-start-2 md:row-end-2 md:col-start-2 md:col-span-1 ${classes['calculated-amount-result-grp']}`}>
 					<span className={classes['calculated-total-amount']}>
 						{minDeliveryQtyRef.current}
 					</span>
 				</div>
-				<div className={classes['calculated-amount-result-grp']}></div>
-				<div className={classes['calculated-amount-result-grp']}>
+				<div
+					className={`row-start-3 col-start-2 row-end-3 col-span-1  md:row-start-2 md:row-end-2 md:col-start-3 md:col-span-1 ${classes['calculated-amount-result-grp']}`}></div>
+				<div
+					className={`row-start-4 row-end-4 col-start-2 col-span-1  md:row-start-2 md:row-end-2 md:col-start-4 md:col-span-1 ${classes['calculated-amount-result-grp']}`}>
 					<span className={classes['calculated-total-amount']}>
 						{costPerUnitRef.current}
 					</span>
 				</div>
-				<div className={classes['calculated-amount-result-grp']}></div>
-				<div className={classes['calculated-amount-result-grp']}>
+				<div
+					className={`row-start-5 row-end-5 col-start-2col-span-1  md:row-start-2 md:row-end-2 md:col-start-1  ${classes['calculated-amount-result-grp']}`}></div>
+				<div
+					className={`row-start-6 row-end-6 col-start-2 col-span-1  md:row-start-2 md:row-end-2 md:col-start-6  md:col-span-1 ${classes['calculated-amount-result-grp']}`}>
 					<span className={classes['calculated-total-amount']}>
 						{subTotalRef.current}
 					</span>

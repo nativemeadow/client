@@ -4,13 +4,13 @@ import { useImage } from 'react-image';
 
 import LoadingSpinner from '../../../shared/components/UIElements/LoadingSpinner';
 
-type image_data = {
+type ImageData = {
 	src: string[];
 	alt: string;
 	cssClass?: string;
 	onClick?: () => {};
 };
-function ImageComponent(props: image_data) {
+function ImageComponent(props: ImageData) {
 	const { src } = useImage({
 		srcList: props.src,
 	});
@@ -25,7 +25,7 @@ function ImageComponent(props: image_data) {
 	);
 }
 
-export default function Image(props: image_data) {
+export default function Image(props: ImageData) {
 	// console.log('Image props:', props);
 	return (
 		<Suspense fallback={<LoadingSpinner />}>

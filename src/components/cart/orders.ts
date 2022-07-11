@@ -7,4 +7,5 @@ export type Orders = {
 	price: number;
 	qty: number;
 	unit: string | undefined;
+	color?: string | undefined;
 };

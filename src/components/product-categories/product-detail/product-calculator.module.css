@@ -171,7 +171,8 @@ textarea {
 
 .calculated-amount-result {
 	display: grid;
-	grid-template-columns: repeat(6, 1fr);
+	grid-template-columns: repeat(2, 1fr);
+	gap: 1rem;
 	grid-template-rows: auto, auto;
 	padding-top: 1rem;
 	padding-bottom: 0.5rem;

@@ -62,23 +62,23 @@ const CategoryDetail = () => {
 				</div>
 				{/* <div className={classes['category__list']}></div> */}
 
-				<div className={classes['category__group']}>
+				<div className={classes['group']}>
 					{categoryGroup?.map((item) => {
 						return (
-							<div key={item.id}>
-								<div className={classes['category__image']}>
+							<div
+								key={item.id}
+								className={classes['image-container']}>
+								<Link to={`/category/${item.id}`}>
+									<img
+										src={`${configData.IMAGES}/product-categories/${item.image}`}
+										alt={item.title}
+									/>
+								</Link>
+								<h2 className={classes['category-title']}>
 									<Link to={`/category/${item.id}`}>
-										<img
-											src={`${configData.IMAGES}/product-categories/${item.image}`}
-											alt={item.title}
-										/>
+										{item.title}
 									</Link>
-									<h2 className={classes['category-title']}>
-										<Link to={`/category/${item.id}`}>
-											{item.title}
-										</Link>
-									</h2>
-								</div>
+								</h2>
 							</div>
 						);
 					})}

@@ -36,6 +36,7 @@
 	display: flex;
 	gap: 1rem;
 	flex-direction: column;
+	width: 100%;
 }
 
 .product-detail h1 {
@@ -262,7 +263,6 @@
 
 .calculator_heading {
 	text-align: center;
-	font-size: 1rem;
 	background-color: #fff;
 	color: #333;
 }
@@ -272,7 +272,7 @@
 	display: block;
 	width: 120px;
 	background: #aa081e;
-	margin: 20px auto 0;
+	margin: 0.5rem auto 0;
 	border: 2px solid #aa081e;
 	border-radius: 25px;
 }

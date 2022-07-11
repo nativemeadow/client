@@ -55,7 +55,7 @@
 
 .shopping-cart__order--items img {
 	object-fit: cover;
-	max-width: 50%;
+	/* max-width: 50%; */
 	margin-top: 0.5rem;
 }
 

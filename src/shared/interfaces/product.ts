@@ -1,3 +1,5 @@
+import { fireEvent } from '@testing-library/react';
+
 export interface JSON {
 	width: string;
 	height: string;
@@ -24,5 +26,30 @@ export interface Product {
 	description: string;
 	image: string;
 	imageLensSize: string;
+	extended: string;
 	pricing: Pricing[];
+}
+
+type actionType = 'append' | 'prepend' | 'replace' | 'add' | 'remove';
+interface field {
+	field: string;
+	action: actionType;
+	hyphen?: boolean;
+}
+
+interface output {
+	fields: Array<field>;
+}
+
+export interface rule {
+	output: Array<output>;
+}
+
+export interface ProductExtensions {
+	name: string;
+	title: string;
+	input: { type: string };
+	labels: Array<string>;
+	values: Array<string>;
+	rules: Array<rule>;
 }

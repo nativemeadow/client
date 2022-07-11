@@ -4,29 +4,26 @@ const useImage = (srcPath: string | string[]) => {
 	const [src, setSrc] = useState('');
 	const [error, setError] = useState<Error | null>(null);
 	const success = useRef(false);
-	const requestStatus = useRef<number>(200);
+	const responseStatus = useRef<number>(200);
 
 	useEffect(() => {
-		console.log('requesting image');
-
 		function fetchImage(imagePath: string) {
 			console.log('called fetchIt', imagePath);
 
 			fetch(imagePath)
 				.then((response) => {
 					if (!response.ok) {
-						console.error('Could not fetch image');
-						requestStatus.current = response.status;
+						responseStatus.current = response.status;
 						setError(new Error('Could not fetch image'));
 					}
 					return response.blob();
 				})
 				.then((objectUrl) => {
-					if (!success.current && requestStatus.current === 200) {
+					if (!success.current && responseStatus.current === 200) {
 						setSrc(imagePath);
 						success.current = true;
 					}
-					requestStatus.current = 200;
+					responseStatus.current = 200;
 				})
 				.catch((error) => {
 					setError(error);

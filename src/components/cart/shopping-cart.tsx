@@ -189,7 +189,10 @@ const ShoppingCart = () => {
 													'shopping-cart__order--item-cell'
 												]
 											}>
-											{order.sku}
+											<div>{order.sku}</div>
+											{order.color && (
+												<div>{order.color}</div>
+											)}
 										</div>
 										<div
 											className={
