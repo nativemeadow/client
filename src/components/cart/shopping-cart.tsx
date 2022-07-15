@@ -113,6 +113,14 @@ const ShoppingCart = () => {
 		setShowDeliveryComments(true);
 	};
 
+	const setTheStep = (unit: string | undefined) => {
+		const unitsArray = ['lbs', 'ton', 'tons', 'yds', 'yds', 'ft', 'cu ft'];
+		if (!unit) {
+			return;
+		}
+		return unitsArray.includes(unit) ? '0.01' : '1';
+	};
+
 	return (
 		<>
 			<DeliveryInstructions
@@ -208,7 +216,7 @@ const ShoppingCart = () => {
 												type='number'
 												data-order-index={key}
 												min='1'
-												step='.01'
+												step={setTheStep(order.unit)}
 												name={`cart_qty_${key}`}
 												value={order.qty}
 												disabled={false}

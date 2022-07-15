@@ -20,6 +20,7 @@ import ChangePassword from './components/users/change-password';
 
 import TestRedux from './components/product-categories/test-redux';
 import TestImages from './components/product-categories/test-images';
+import TestGetImages from './components/product-categories/test-get-images';
 
 const queryClient = new QueryClient();
 
@@ -93,6 +94,10 @@ function App() {
 						/>
 						<Route path='/test-redux' element={<TestRedux />} />
 						<Route path='/test-image' element={<TestImages />} />
+						<Route
+							path='/get-test-image'
+							element={<TestGetImages />}
+						/>
 					</Route>
 				</Routes>
 			</AuthContext.Provider>

@@ -54,4 +54,5 @@
 	border-width: 0.3rem;
 	border-style: solid;
 	background-repeat: no-repeat;
+	z-index: 20;
 }

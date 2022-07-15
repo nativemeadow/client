@@ -1,6 +1,7 @@
 #bread-crumbs-wrapper {
 	padding: 32px 0;
 	margin-bottom: 0;
+	margin-left: 1rem;
 }
 
 #bread-crumbs-wrapper .bread-crumbs {

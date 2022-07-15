@@ -1,6 +1,6 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
-const useImage = (srcPath: string | string[]) => {
+const useImage = (srcPath: string | string[] | null) => {
 	const [src, setSrc] = useState('');
 	const [error, setError] = useState<Error | null>(null);
 	const success = useRef(false);
@@ -37,6 +37,7 @@ const useImage = (srcPath: string | string[]) => {
 		if (!srcPath) {
 			return;
 		}
+
 		if (Array.isArray(srcPath) && srcPath.length > 0) {
 			fetchAllImages(srcPath);
 		} else {

@@ -54,7 +54,7 @@ export default function ProductThumbs(props: Props) {
 							}
                             `}
 							src={`${configData.IMAGES}/products/${price.image}`}
-							alt=''
+							alt={`${price.title}`}
 							onClick={selectThumb}
 						/>
 					</div>

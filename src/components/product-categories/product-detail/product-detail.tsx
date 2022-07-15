@@ -14,7 +14,7 @@ import ProductBuilder from '../../../shared/util/product-builder';
 import configData from '../../../config.json';
 import ProductCalculator from './product-calculator';
 import httpFetch from '../../../shared/http/http-fetch';
-import Image from '../../../shared/components/UIElements/Images';
+// import Image from '../../../shared/components/UIElements/Images';
 import { Orders } from '../../cart/orders';
 import ProductThumbs from './product-thumbs';
 import AddToCartForm from './product-form';
@@ -227,12 +227,19 @@ const ProductDetail = (props: any) => {
 		const productJson: Orders = {
 			categoryId: products?.categoryId,
 			id: products?.id,
-			sku: productSku,
+			// if the product does not have multiple pricing, then the sku comes for the parent product not from pricing
+			sku: productSku ? productSku : products?.sku,
 			title: products?.title,
 			image: productImageRef.current,
-			price: selectedPriceRef.current,
+			// if the product does not have multiple pricing, then the price comes for the first pricing element
+			price: selectedPriceRef.current
+				? selectedPriceRef.current
+				: products?.pricing[0].price!,
 			qty: productQty,
-			unit: selectedUnitRef.current,
+			// if the product does not have multiple pricing, then the units comes for the first pricing element
+			unit: selectedUnitRef.current
+				? selectedUnitRef.current
+				: products?.pricing[0].units,
 			color: extendedValue,
 		};
 		let orders: Orders[];
@@ -260,12 +267,6 @@ const ProductDetail = (props: any) => {
 		openAddToCartHandler();
 	};
 
-	const handleExtendedInfo = (
-		event: React.ChangeEvent<HTMLSelectElement>
-	) => {
-		const value = event.target.value;
-	};
-
 	const calculatorAddToCartHandler = (
 		event: React.FormEvent<HTMLFormElement>
 	) => {
@@ -274,7 +275,7 @@ const ProductDetail = (props: any) => {
 	};
 
 	const imageHandler = () => {
-		if (windowSize.width! > 768) {
+		if (windowSize.width! > 768 && products?.imageLensSize) {
 			return (
 				<DetailZoom
 					productImage={productImage}
@@ -424,7 +425,7 @@ const ProductDetail = (props: any) => {
 							className={
 								classes['product-detail__image--wrapper']
 							}>
-							{imageHandler()}
+							{productImage && imageHandler()}
 						</div>
 						<ProductThumbs
 							productThumbs={productThumbs}

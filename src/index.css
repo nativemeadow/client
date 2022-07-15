@@ -179,3 +179,23 @@ h1.page_title:after {
 	/* transition: all 100ms; */
 	transition: opacity 1000ms, transform 1000ms;
 }
+
+#pdf-link {
+	margin-right: 20px;
+}
+
+#pdf-link a .pdf-ico {
+	background: url(../public/images/pdf-icon-sm.png) no-repeat;
+	width: 22px;
+	height: 30px;
+	display: block;
+	margin-right: 10px;
+	float: left;
+}
+
+#pdf-link a .pdf-view {
+	height: 30px;
+	line-height: 30px;
+	display: block;
+	float: left;
+}

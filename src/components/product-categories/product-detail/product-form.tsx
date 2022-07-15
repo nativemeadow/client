@@ -58,7 +58,7 @@ const ProductForm: React.FC<Props> = ({
 					onChange={(event) =>
 						setProductQty(parseInt(event.target.value, 10))
 					}
-					disabled={productSize.length === 0}
+					disabled={productSize.length < 0}
 				/>
 				<div className={classes['product-quantity__selection--units']}>
 					{/* {!productThumbs
@@ -66,7 +66,7 @@ const ProductForm: React.FC<Props> = ({
 						: removeDuplicateCharacters(productSize)} */}
 				</div>
 				<div className={classes['product-quantity__selection--button']}>
-					<button type='submit' disabled={productSize.length === 0}>
+					<button type='submit' disabled={productSize.length < 0}>
 						Add to Cart
 					</button>
 				</div>
@@ -88,7 +88,7 @@ const ProductForm: React.FC<Props> = ({
 					</p>
 				)}
 				{products.extended && <ProductExtended products={products} />}
-				{products?.pricing.length! > 0 && (
+				{products?.pricing.length! > 1 && (
 					<select
 						name='product_select'
 						value={selectedValue}
@@ -108,6 +108,13 @@ const ProductForm: React.FC<Props> = ({
 							);
 						})}
 					</select>
+				)}
+				{products?.pricing.length! === 1 && (
+					<input
+						type='hidden'
+						name='product_select'
+						value={selectedValue}
+					/>
 				)}
 			</div>
 

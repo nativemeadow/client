@@ -3,6 +3,9 @@
  */
 
 import React, { useState, useRef, useEffect, Suspense } from 'react';
+import useImage from '../../../shared/hooks/use-image';
+import useGetImage from '../../../shared/hooks/use-getImage';
+
 // import { useImage } from 'react-image';
 // import LoadingSpinner from '../../../shared/components/UIElements/LoadingSpinner';
 
@@ -45,17 +48,29 @@ const DetailZoom: React.FC<Props> = (
 	const [backgroundSize, setBackgroundSize] = useState<string>('');
 	const [backgroundPosition, setBackgroundPosition] = useState<string>('');
 	const [backgroundImage, setBackGroundImage] = useState<string>();
+	const [defaultImageSrc, setDefaultImageSrc] = useState<string>();
 
 	const [containerRect, setContainerRect] = useState<DOMRect>();
 	const [imageRect, setImageRect] = useState<DOMRect>();
 	const [lensRect, setLensRect] = useState<DOMRect>();
 	const [resultRect, setResultRect] = useState<DOMRect>();
+	const { src, error, getImage } = useGetImage('');
 
 	useEffect(() => {
-		const img: string | undefined = imagePath + productImage || undefined;
-		//setBackGroundImage(GetImage(img));
+		const img: string | undefined = imagePath + productImage;
 		setBackGroundImage(img);
 	}, [setBackGroundImage, productImage, imagePath]);
+
+	// useEffect(() => {
+	// 	const img: string | undefined = imagePath + productImage;
+	// 	const defaultImg: string | undefined = imagePath + defaultImage;
+
+	// 	console.log('**** img:', img);
+	// 	console.log('**** defaultImg:', defaultImg);
+
+	// 	getImage([img]);
+	// 	productImage;
+	// }, [productImage, defaultImage, imagePath, getImage]);
 
 	console.log('backgroundImage:', backgroundImage);
 
@@ -118,6 +133,7 @@ const DetailZoom: React.FC<Props> = (
 			className={'zoom-container'}
 			onMouseMove={zoomImage}
 			onMouseOut={hideZoom}
+			// onTouchStart={zoomImage}
 			ref={containerRef}>
 			<div className='zoom-tint'></div>
 			{/* <Suspense fallback={<LoadingSpinner />}> */}

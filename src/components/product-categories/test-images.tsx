@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import useImage from '../../shared/hooks/use-image';
+import useGetImage from '../../shared/hooks/use-getImage';
+
 import configData from '../../config.json';
 
 const theImage = [
@@ -8,7 +10,9 @@ const theImage = [
 ];
 
 const GetImagesFromServer = function GetImagesFromServer() {
-	const { src, error } = useImage(theImage);
+	const { src, error, getImage } = useGetImage('');
+
+	getImage(theImage);
 
 	return (
 		<div>
