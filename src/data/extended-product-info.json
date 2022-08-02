@@ -4,6 +4,7 @@
 		"title": "Glazes",
 		"input": { "type": "select" },
 		"values": ["", "blue", "green", "ivory", "yellow"],
+		"sku-suffix": ["", "AB", "AG", "AI", "AY"],
 		"labels": [
 			"Select Color",
 			"Blue Glaze",

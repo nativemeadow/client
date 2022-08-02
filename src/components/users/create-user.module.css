@@ -13,7 +13,7 @@
 .reg-login-information,
 .reg-login-name-address {
 	display: grid;
-	grid-template-columns: 1fr;
+	grid-template-columns: 1fr, 1fr;
 	gap: 0.5rem;
 }
 
@@ -34,7 +34,7 @@
 
 .reg-login-fields {
 	display: grid;
-	grid-template-columns: 25rem;
+	grid-template-columns: 25rem, 25rem;
 	align-items: center;
 	gap: 0.5rem;
 }
@@ -42,6 +42,18 @@
 .reg-login__label {
 	font-size: 14px;
 	font-weight: 600;
+}
+
+.requested-label {
+	align-self: baseline;
+	justify-self: start;
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.required {
+	color: #aa081e;
+	font-size: 1.5rem;
 }
 
 .reg-login__button {
@@ -57,12 +69,20 @@
 @media screen and (min-width: 768px) {
 	.reg-login-fields {
 		display: grid;
-		grid-template-columns: 12rem 25rem;
+		grid-template-columns: 12rem 25rem 2rem;
 		align-items: center;
 		gap: 0.5rem;
 	}
+
+	.requested-label {
+		align-self: baseline;
+		justify-self: end;
+	}
 }
 
-.error__listItems {
-	list-style: none;
+.error-message {
+	max-width: 65%;
+	justify-self: right;
+	color: #aa081e;
+	font-size: 1rem;
 }

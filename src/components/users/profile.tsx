@@ -40,6 +40,13 @@ export default function Profile() {
 		event: React.ChangeEvent<HTMLSelectElement>
 	) => {};
 
+	const onBlurHandler = (event: React.FocusEvent<HTMLInputElement>) => {
+		const val = event.target.value;
+		const name = event.target.name;
+		setInputVal({ ...inputVal, [name]: val });
+		console.log('input value:', inputVal);
+	};
+
 	const updateUserHandler = async (
 		event: React.FormEvent<HTMLFormElement>
 	) => {
@@ -100,6 +107,7 @@ export default function Profile() {
 						inputVal={inputVal}
 						changeHandler={changeHandler}
 						selectChangeHandler={selectChangeHandler}
+						onBlurHandler={onBlurHandler}
 					/>
 				</form>
 			</div>

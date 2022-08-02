@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { ChangeEvent, useState, useContext, useEffect } from 'react';
 import { statesProvinces, countries } from '../../shared/util/location-lookup';
 import { FormInput } from '../../shared/interfaces/user';
 
@@ -6,14 +6,20 @@ import classes from './create-user.module.css';
 
 interface Props {
 	inputVal: any;
-	changeHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
+	errors?: any;
+	changeHandler: (
+		event: ChangeEvent<HTMLInputElement & HTMLSelectElement>
+	) => void;
 	selectChangeHandler: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+	onBlurHandler: (event: React.FocusEvent<HTMLInputElement>) => void;
 }
 
 const ProfileInformation: React.FC<Props> = ({
 	inputVal,
+	errors,
 	changeHandler,
 	selectChangeHandler,
+	onBlurHandler,
 }) => {
 	return (
 		<>
@@ -33,8 +39,17 @@ const ProfileInformation: React.FC<Props> = ({
 						name='firstName'
 						value={inputVal.firstName}
 						onChange={changeHandler}
+						onBlur={onBlurHandler}
 					/>
+					<div className={classes['required']}>*</div>
+					{errors.firstName && (
+						<p
+							className={`error col-span-2 ${classes['error-message']}`}>
+							{errors.firstName}
+						</p>
+					)}
 				</div>
+
 				<div className={classes['reg-login-fields']}>
 					<label
 						className={classes['reg-login__label']}
@@ -47,8 +62,40 @@ const ProfileInformation: React.FC<Props> = ({
 						name='lastName'
 						value={inputVal.lastName}
 						onChange={changeHandler}
+						onBlur={onBlurHandler}
 					/>
+					<div className={classes['required']}>*</div>
+					{errors.lastName && (
+						<p
+							className={`error col-span-2 ${classes['error-message']}`}>
+							{errors.lastName}
+						</p>
+					)}
 				</div>
+
+				<div className={classes['reg-login-fields']}>
+					<label
+						className={classes['reg-login__label']}
+						htmlFor='email'>
+						Email Address
+					</label>
+					<input
+						type='text'
+						id='email'
+						name='email'
+						value={inputVal.email}
+						onChange={changeHandler}
+						onBlur={onBlurHandler}
+					/>
+					<div className={classes['required']}>*</div>
+					{errors.email && (
+						<p
+							className={`error col-span-2 ${classes['error-message']}`}>
+							{errors.email}
+						</p>
+					)}
+				</div>
+
 				<div className={classes['reg-login-fields']}>
 					<label
 						className={classes['reg-login__label']}
@@ -63,20 +110,7 @@ const ProfileInformation: React.FC<Props> = ({
 						onChange={changeHandler}
 					/>
 				</div>
-				<div className={classes['reg-login-fields']}>
-					<label
-						className={classes['reg-login__label']}
-						htmlFor='email'>
-						Email Address
-					</label>
-					<input
-						type='text'
-						id='email'
-						name='email'
-						value={inputVal.email}
-						onChange={changeHandler}
-					/>
-				</div>
+
 				<div className={classes['reg-login-fields']}>
 					<label
 						className={classes['reg-login__label']}
